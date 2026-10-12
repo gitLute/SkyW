@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Scenes</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../SkyW.Content/SkyW.Content.csproj" />
+    <ProjectReference Include="../SkyW.Mathematics/SkyW.Mathematics.csproj" />
+  </ItemGroup>
+
+  <!--
+    Слой 2. Сцена — данные, а не код: движок не содержит знаний о конкретных сценах
+    и типах объектов (docs/engine-architecture.md раздел 4.1).
+
+    Подтяжка через регистры, без рефлексии (раздел 4.2). Имя в регистре — единственный
+    контракт между скриптом и движком; опечатка обязана обнаруживаться при старте.
+
+    Каталоги внутри:
+      Registries/  ComponentRegistry, SystemRegistry, MethodHandlerRegistry, проверка имён
+      Prefabs/     Prefab, PrefabManager, разрешение циклов, валидация до загрузки сцены
+      Building/    SceneBuilder, SceneContext
+      Streaming/   загрузка по зонам, освобождение памяти при уходе
+      Scripts/     ISceneScript, ScriptHost: точка подключения языка скриптов (открытый вопрос)
+  -->
+
+</Project>

@@ -1,0 +1,40 @@
+<Project>
+
+  <!--
+    Централизованное управление версиями пакетов.
+    Версии зафиксированы по docs/stack-constraints.md раздел 0 и проверены 2026-10-12:
+      Silk.NET         2.23.0
+      Hexa.NET.Math    2.0.8
+      JoltPhysicsSharp 2.23.0 (тянет JoltPhysics.Native 1.1.0)
+      Friflo.Engine.ECS 3.6.0 (lib только до net8.0, на net10.0 резолвится сборка net8.0)
+
+    Правило обновления: Jolt обновляется отдельным коммитом с прогоном регрессионного
+    теста tests/SkyW.Tests.Stack (docs/stack-constraints.md раздел 9).
+  -->
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup Label="Стек движка">
+    <PackageVersion Include="Silk.NET.Maths" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.OpenGL" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.Windowing.Glfw" Version="2.23.0" />
+    <PackageVersion Include="Silk.NET.Input.Glfw" Version="2.23.0" />
+    <PackageVersion Include="Hexa.NET.Math" Version="2.0.8" />
+    <PackageVersion Include="JoltPhysicsSharp" Version="2.23.0" />
+    <PackageVersion Include="Friflo.Engine.ECS" Version="3.6.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Инструменты контента">
+    <PackageVersion Include="StbImageSharp" Version="2.30.16" />
+  </ItemGroup>
+
+  <ItemGroup Label="Тесты">
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageVersion Include="xunit.v3" Version="4.0.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
+  </ItemGroup>
+
+</Project>

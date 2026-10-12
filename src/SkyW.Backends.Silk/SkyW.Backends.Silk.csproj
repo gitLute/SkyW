@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Backends.Silk</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup Label="Гранулярные пакеты вместо вендорной сборки Silk.NET">
+    <!--
+      Пакет Silk.NET тянет за собой весь стек, включая неиспользуемые Vulkan и OpenAL
+      (docs/stack-constraints.md раздел 7). Открытый вопрос 2 раздела 12 закрыт:
+      используются только нужные пакеты.
+      Связь пакетов: Input.Glfw -> Windowing.Glfw -> GLFW + Windowing.Common;
+                      OpenGL -> Core + Maths.
+    -->
+    <PackageReference Include="Silk.NET.OpenGL" />
+    <PackageReference Include="Silk.NET.Windowing.Glfw" />
+    <PackageReference Include="Silk.NET.Input.Glfw" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../SkyW.Mathematics/SkyW.Mathematics.csproj" />
+  </ItemGroup>
+
+  <!--
+    Слой 4. Реализация IWindowHost, IInputSource и IRenderDevice на Silk.NET.
+
+    Здесь и только здесь допустимо обращение к Silk.NET из прикладного кода
+    (docs/engine-architecture.md раздел 1.2).
+
+    Silk.NET.OpenGL 2.23.0 содержит только сырые биндинги GL: обёрток FBO, Texture2D
+    и Mesh в пакете нет. Все обёртки пишутся здесь, что совпадает с требованием
+    кэшировать состояние рендера (docs/engine-architecture.md раздел 5.3).
+
+    Каталоги внутри:
+      Window/  GlfwWindowHost, GlfwWindow
+      Input/   GlfwInputSource: клавиатура, мышь, геймпад
+      Gl/      GlRenderDevice, GlStateCache, GlTexture2D, GlVertexBuffer, GlIndexBuffer,
+               GlVertexArray, GlShaderProgram, GlRenderTarget
+
+    Окно и ввод связаны на уровне пакетов (Input.Glfw зависит от Windowing.Glfw),
+    поэтому они живут в одном бэкенде, но разведены интерфейсами в слое 1.
+  -->
+
+</Project>

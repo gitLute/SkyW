@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Diagnostics</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../SkyW.Mathematics/SkyW.Mathematics.csproj" />
+  </ItemGroup>
+
+  <!--
+    Слой 2. Профилирование как штатный инструмент, а не как оптимизация постфактум
+    (docs/engine-architecture.md раздел 6.1).
+
+    Каталоги внутри:
+      Counters/   шаги симуляции за кадр, слоты кольцевого буфера, отсечения по причинам,
+                  вызовы отрисовки, смены состояния рендера
+      Profiling/  таймеры стадий: симуляция, сортировка, сборка видимого, проходы, вывод
+      Logging/    приёмники логирования: консоль, файл, кольцевой буфер
+      Quality/    политика деградации качества с гистерезисом (раздел 6.2)
+  -->
+
+</Project>

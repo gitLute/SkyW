@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Rendering</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../SkyW.Content/SkyW.Content.csproj" />
+    <ProjectReference Include="../SkyW.Mathematics/SkyW.Mathematics.csproj" />
+  </ItemGroup>
+
+  <!--
+    Слой 3. Рендер-конвейер поверх IRenderDevice.
+
+    Рендер не знает о физике, а проект не ссылается на SkyW.Simulation: состояние
+    приходит снимком через ISnapshotChannel (docs/engine-architecture.md раздел 7).
+
+    Мировые единицы не знают о пикселях. Привязка к пиксельной сетке существует
+    только здесь, в трёх местах конвейера, и не выходит в игровую логику
+    (docs/graphics-art-direction-lowpoly-pixel-3d.md раздел 3).
+
+    Каталоги внутри:
+      Device/     RenderDevice, RenderTargets: низкий буфер 3D и буфер интерфейса
+      Camera/     Camera, стратегии режимов, следование, вычисление размера объекта
+      Projection/ перспективная с раздельными FOV по осям и ортогональная, переключаемые
+      Culling/    разреженная сетка мира, сборка видимого, отсечение по пирамиде
+      Passes/     WorldPass, TransparentPass, AlphaPass, UiPass, CompositePass
+      Batching/   батчинг по материалу и состоянию, сортировка прозрачного вне цикла
+      Pixel/      PixelGrid, привязка к пикселю, целочисленное увеличение
+      Sprites/    билборд с честным разворотом к камере, батчинг спрайтов, UV атласа
+      Materials/  материал, режимы наложения и отсечения, расширяемые реестром
+      Shaders/    библиотека шейдеров, реестр эффектов
+      Post/       конвейер постобработки, слой переходов между сценами
+      Lighting/   направленный и ambient свет, локальные источники, небо как источник состояния
+      Quality/    настройки качества, бюджет кадра
+      Ui/         отдельный контур отрисовки со своей системой координат
+      Text/       растровый шрифт для низкого разрешения, векторный для интерфейса
+  -->
+
+</Project>

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Input</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+  </ItemGroup>
+
+  <!--
+    Слой 3. Логика ввода поверх IInputSource.
+
+    Проект не ссылается ни на Silk.NET, ни на Backends.Silk: платформенное чтение ввода
+    не просачивается в игровую логику (docs/engine-architecture.md раздел 1.2).
+    Проверяется обычным юнит-тестом с подставным источником.
+
+    Каталоги внутри:
+      Mapping/   InputMap, ActionMap, привязки действий
+      Filtering/ мёртвые зоны, сглаживание, масштаб смещения мыши
+  -->
+
+</Project>

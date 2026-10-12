@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Tools.Terrain</RootNamespace>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../../src/SkyW.Content/SkyW.Content.csproj" />
+    <ProjectReference Include="../../src/SkyW.Mathematics/SkyW.Mathematics.csproj" />
+  </ItemGroup>
+
+  <!--
+    Генерация геометрии земли из данных уровня.
+
+    Земля логичнее генерироваться из данных уровня, чем загружаться готовым мешем:
+    иначе каждая карта становится отдельным ассетом
+    (docs/graphics-art-direction-lowpoly-pixel-3d.md раздел 5.2).
+
+    Форма коллизии задаётся вместе с мешем, а не выводится из геометрии неявно
+    (там же, раздел 5.5). Бэкендов не тянет.
+  -->
+
+</Project>

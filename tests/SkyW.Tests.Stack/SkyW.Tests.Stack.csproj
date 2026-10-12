@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Tests.Stack</RootNamespace>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <!-- Прямая ссылка ради проверки моста Silk.NET.Maths -> System.Numerics. -->
+    <PackageReference Include="Silk.NET.Maths" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../../src/SkyW.Backends.Friflo/SkyW.Backends.Friflo.csproj" />
+    <ProjectReference Include="../../src/SkyW.Backends.Jolt/SkyW.Backends.Jolt.csproj" />
+    <ProjectReference Include="../../src/SkyW.Mathematics/SkyW.Mathematics.csproj" />
+  </ItemGroup>
+
+  <!--
+    Регрессионный тест стека из docs/stack-constraints.md раздел 8.
+
+    Ловит: отсутствие Foundation.Init (процесс падает с кодом возврата 139),
+    конфликты имён CS0104, изменение публичного API после обновления пакета,
+    расхождение физики или моста Silk.NET.Maths.
+
+    Тест обязателен до и после обновления Jolt: несовместимость проявляется падением
+    нативного кода, а не ошибкой компиляции. Обновление Jolt идёт отдельным коммитом
+    с прогоном этого теста (docs/stack-constraints.md раздел 9).
+  -->
+
+</Project>

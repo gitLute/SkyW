@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Backends.Jolt</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Тянет JoltPhysics.Native 1.1.0: нативная libjoltc.so лежит в отдельном пакете. -->
+    <PackageReference Include="JoltPhysicsSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../SkyW.Mathematics/SkyW.Mathematics.csproj" />
+  </ItemGroup>
+
+  <!--
+    Слой 4. Реализация IPhysicsWorld на Jolt.
+
+    JoltPhysicsSharp 2.23.0 публикуется только под net9.0 и net10.0, что ограничивает
+    весь проект, а не только этот модуль (docs/stack-constraints.md раздел 1).
+
+    Первый вызов в нативную библиотеку без Foundation.Init обрушивает процесс SIGSEGV,
+    а не исключением: код возврата 139, catch не помогает (раздел 2). Инициализация
+    обязана выполняться внутри обёртки физического мира, а не в прикладном коде,
+    иначе рано или поздно появится путь выполнения, который её пропустит.
+
+    Выбор точности Foundation.Init(false) или (true) фиксируется один раз
+    и меняет типы во всём коде физики (открытый вопрос 1 раздела 12).
+
+    Каталоги внутри:
+      Bodies/   создание, добавление, перемещение, сон
+      Shapes/   ShapeFactory: Box, Sphere, Capsule, Mesh, HeightField, сохранение форм
+      Queries/  RayCast и ShapeCast; выполняются только из шага симуляции
+      Events/   ContactListener, пишущий в очередь событий
+
+    Контакт-колбэки Jolt вызываются внутри PhysicsSystem::Update из нескольких потоков,
+    и во время Update читать и писать тела запрещено. Поэтому запросы физики из потока
+    рендера невозможны: подсветка объекта под курсором считается в шаге симуляции.
+  -->
+
+</Project>

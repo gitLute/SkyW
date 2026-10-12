@@ -1,0 +1,28 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <Project Path="src/SkyW.Mathematics/SkyW.Mathematics.csproj" />
+    <Project Path="src/SkyW.Diagnostics/SkyW.Diagnostics.csproj" />
+    <Project Path="src/SkyW.Content/SkyW.Content.csproj" />
+    <Project Path="src/SkyW.Scenes/SkyW.Scenes.csproj" />
+    <Project Path="src/SkyW.Simulation/SkyW.Simulation.csproj" />
+    <Project Path="src/SkyW.Input/SkyW.Input.csproj" />
+    <Project Path="src/SkyW.Rendering/SkyW.Rendering.csproj" />
+    <Project Path="src/SkyW.Backends.Silk/SkyW.Backends.Silk.csproj" />
+    <Project Path="src/SkyW.Backends.Jolt/SkyW.Backends.Jolt.csproj" />
+    <Project Path="src/SkyW.Backends.Friflo/SkyW.Backends.Friflo.csproj" />
+    <Project Path="src/SkyW.Host/SkyW.Host.csproj" />
+    <Project Path="src/SkyW.Sandbox/SkyW.Sandbox.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/SkyW.Tools.Atlas/SkyW.Tools.Atlas.csproj" />
+    <Project Path="tools/SkyW.Tools.Cook/SkyW.Tools.Cook.csproj" />
+    <Project Path="tools/SkyW.Tools.Terrain/SkyW.Tools.Terrain.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SkyW.Tests.Unit/SkyW.Tests.Unit.csproj" />
+    <Project Path="tests/SkyW.Tests.Architecture/SkyW.Tests.Architecture.csproj" />
+    <Project Path="tests/SkyW.Tests.Stack/SkyW.Tests.Stack.csproj" />
+    <Project Path="tests/SkyW.RenderHarness/SkyW.RenderHarness.csproj" />
+  </Folder>
+</Solution>

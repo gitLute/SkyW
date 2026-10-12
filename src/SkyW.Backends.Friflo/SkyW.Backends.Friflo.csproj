@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Backends.Friflo</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Friflo.Engine.ECS" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+  </ItemGroup>
+
+  <!--
+    Слой 4. Реализация IEntityStore на Friflo.
+
+    Friflo.Engine.ECS 3.6.0 — единственный отставший пакет стека: lib только до net8.0,
+    поэтому на net10.0 резолвится его сборка net8.0, и это работает
+    (docs/stack-constraints.md раздел 1). Friflo первым упрётся, если понадобится
+    что-то, специфичное для .NET 10.
+
+    Внутри обхода ForEachEntity запрещены AddComponent и RemoveComponent:
+    Friflo бросает StructuralChangeException. Запись в ref-параметр попадает в чанк
+    данных сразу, поэтому отдельная стадия структурных изменений не нужна внутри шага
+    (docs/stack-constraints.md раздел 5).
+
+    Метода Entity.SetComponent нет: замена значения компонента делается через
+    Entity.AddComponent<T>(in T) вне обхода.
+
+    Список компонентов хранится в одном месте, в реестре SkyW.Scenes, а не параллельно
+    в ECS (docs/engine-architecture.md раздел 4.4). Этот проект выполняет регистрацию
+    типов по списку из реестра.
+  -->
+
+</Project>

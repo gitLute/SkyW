@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Content</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../SkyW.Mathematics/SkyW.Mathematics.csproj" />
+  </ItemGroup>
+
+  <!--
+    Слой 2. Форматы ресурсов и правила сериализации.
+
+    Проект намеренно не зависит ни от рендера, ни от физики: его читает и рантайм,
+    и офлайн-инструменты из tools/. Формат определён с первого дня, потому что
+    миграция формата в середине проекта болезненна
+    (docs/engine-architecture.md раздел 3.2).
+
+    Каталоги внутри:
+      Formats/        MeshFormat, TextureFormat, AtlasFormat, SceneFormat, PrefabFormat
+      Serialization/  правила чтения и записи компонентов, реестр правил (раздел 4.2)
+      References/     ResourceRef: ссылка по идентификатору, не по пути
+      Manifest/       список ресурсов и хэши содержимого, основа кэша пересборки атласа
+      Atlas/          AtlasPacker: раскладка, padding, поправка UV на полупиксель
+      Terrain/        генерация геометрии земли из данных уровня
+  -->
+
+</Project>

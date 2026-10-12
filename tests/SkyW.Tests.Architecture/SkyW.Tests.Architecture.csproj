@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Tests.Architecture</RootNamespace>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <!--
+    Тест графа ссылок между проектами.
+
+    Проверяет свойства, которые иначе ломаются тихо и обнаруживаются поздно:
+
+      - SkyW.Abstractions не ссылается ни на кого: внешние библиотеки не должны
+        просачиваться в прикладной код (раздел 1.2);
+      - проекты в tools/ не ссылаются на бэкенды: офлайн-инструмент не должен
+        тянуть контекст GL и нативную физику;
+      - SkyW.Simulation не ссылается на SkyW.Rendering, а SkyW.Rendering
+        не ссылается на SkyW.Simulation (раздел 7).
+
+    Источник сведений — файлы .csproj, разобранные как XML. Рефлексия в рантайме
+    движка при этом не используется, запрет раздела 4.2 не нарушается.
+  -->
+
+</Project>

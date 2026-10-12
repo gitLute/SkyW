@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Sandbox</RootNamespace>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Host/SkyW.Host.csproj" />
+  </ItemGroup>
+
+  <!--
+    Демонстрация движка: игровые системы, сцены и контент.
+
+    Движок не содержит знаний о конкретных сценах или типах объектов
+    (docs/engine-architecture.md раздел 4.1), поэтому всё прикладное живёт здесь,
+    а не в SkyW.Host.
+
+    Каталоги внутри:
+      Scenes/   данные сцен, собираемые через регистры и менеджер префабов
+      Systems/  игровые системы поверх реестра систем
+      Content/  контент, подготовленный инструментами из tools/
+  -->
+
+</Project>

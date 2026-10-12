@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Simulation</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../SkyW.Content/SkyW.Content.csproj" />
+    <ProjectReference Include="../SkyW.Diagnostics/SkyW.Diagnostics.csproj" />
+    <ProjectReference Include="../SkyW.Mathematics/SkyW.Mathematics.csproj" />
+    <ProjectReference Include="../SkyW.Scenes/SkyW.Scenes.csproj" />
+  </ItemGroup>
+
+  <!--
+    Слой 3. Симуляция с фиксированным шагом.
+
+    Симуляция не знает о частоте кадра, рендер читает снимок и не пишет в симуляцию
+    (docs/engine-architecture.md разделы 2 и 7). Проект не ссылается на SkyW.Rendering:
+    снимок проходит наружу через ISnapshotChannel из слоя 1.
+
+    Синхронизация — часть планировщика, а не подсистем, поэтому однопоточный режим
+    выполняет тот же код без синхронизации (раздел 2.4).
+
+    Каталоги внутри:
+      Scheduling/    фиксированный шаг, аккумулятор, ограничение догоняющих шагов
+      Snapshots/     SnapshotRing: фиксированное число слотов, готовность слота,
+                    запрет перезаписи занятого слота; WorldSnapshot; интерполяция alpha
+      Stages/        стадии шага: структурные изменения, физика, игровая логика
+      Integration/   мост физика и ECS, PhysicsSyncPoint
+      Systems/       базовые системы: гравитация, движение, таймеры, сенсоры
+      Modes/         потоковый и однопоточный режимы: один и тот же цикл
+
+    Внутри шага запрещены структурные изменения ECS: Friflo бросает
+    StructuralChangeException внутри обхода (docs/stack-constraints.md раздел 5).
+  -->
+
+</Project>

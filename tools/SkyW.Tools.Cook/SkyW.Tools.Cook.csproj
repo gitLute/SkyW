@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Tools.Cook</RootNamespace>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../../src/SkyW.Content/SkyW.Content.csproj" />
+    <ProjectReference Include="../../src/SkyW.Mathematics/SkyW.Mathematics.csproj" />
+  </ItemGroup>
+
+  <!--
+    Готовка ресурсов: приведение ассетов к формату рантайма, манифест ресурсов,
+    правила сериализации компонентов.
+
+    Формат ресурса определён заранее и включает адресацию, выравнивание и сжатие
+    (docs/engine-architecture.md раздел 3.2). Бэкендов не тянет.
+  -->
+
+</Project>

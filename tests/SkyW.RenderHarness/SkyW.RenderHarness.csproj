@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.RenderHarness</RootNamespace>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/SkyW.Backends.Silk/SkyW.Backends.Silk.csproj" />
+    <ProjectReference Include="../../src/SkyW.Rendering/SkyW.Rendering.csproj" />
+  </ItemGroup>
+
+  <!--
+    Ручная проверка кадра: окно, контекст GL, целочисленное увеличение, атлас,
+    билборд, интерфейс в своём разрешении.
+
+    Это не тестовый проект: dotnet test его не запускает, потому что проверка
+    требует настоящего GL-контекста и окна. Запускается вручную командой
+    dotnet run с указанием пути к этому проекту.
+
+    Отдельный проект, а не тест в SkyW.Tests.Unit, именно поэтому: автотесты
+    должны проходить без окна, иначе их нельзя гонять в headless-среде.
+  -->
+
+</Project>

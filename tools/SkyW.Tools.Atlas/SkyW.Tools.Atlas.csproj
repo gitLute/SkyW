@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Tools.Atlas</RootNamespace>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StbImageSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../../src/SkyW.Content/SkyW.Content.csproj" />
+    <ProjectReference Include="../../src/SkyW.Mathematics/SkyW.Mathematics.csproj" />
+  </ItemGroup>
+
+  <!--
+    Офлайн-сборка атласа спрайтов.
+
+    Атлас собирается заранее, на этапе сборки контента, а не в рантайме
+    (docs/engine-architecture.md раздел 3.1): перекомпоновка GPU-ресурсов в игре
+    недопустима.
+
+    Кэш подготовки атласа — по содержимому набора файлов, поэтому повторный запуск
+    без изменений ничего не пересобирает.
+
+    Проект не ссылается ни на один бэкенд: ни контекста GL, ни нативной физики
+    в офлайн-инструменте быть не должно. Это проверяется тестом архитектуры.
+  -->
+
+</Project>

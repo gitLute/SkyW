@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Host</RootNamespace>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../SkyW.Backends.Friflo/SkyW.Backends.Friflo.csproj" />
+    <ProjectReference Include="../SkyW.Backends.Jolt/SkyW.Backends.Jolt.csproj" />
+    <ProjectReference Include="../SkyW.Backends.Silk/SkyW.Backends.Silk.csproj" />
+    <ProjectReference Include="../SkyW.Content/SkyW.Content.csproj" />
+    <ProjectReference Include="../SkyW.Diagnostics/SkyW.Diagnostics.csproj" />
+    <ProjectReference Include="../SkyW.Input/SkyW.Input.csproj" />
+    <ProjectReference Include="../SkyW.Mathematics/SkyW.Mathematics.csproj" />
+    <ProjectReference Include="../SkyW.Rendering/SkyW.Rendering.csproj" />
+    <ProjectReference Include="../SkyW.Scenes/SkyW.Scenes.csproj" />
+    <ProjectReference Include="../SkyW.Simulation/SkyW.Simulation.csproj" />
+  </ItemGroup>
+
+  <!--
+    Композиция зависимостей и главный цикл. Это единственный проект, который видит
+    все подсистемы: он связывает реализации слоя 4 с интерфейсами слоя 1.
+
+    Здесь задаётся порядок инициализации: Foundation.Init вызывается внутри обёртки
+    физического мира, а не отсюда; ошибка конфигурации обнаруживается на старте,
+    а не посреди кадра.
+
+    Каталоги внутри:
+      Bootstrap/  порядок инициализации, проверка имён регистров, валидация ресурсов
+      Loop/      сбор ввода, шаги симуляции, снимок, кадр рендера
+
+    SkyW.Sandbox — демонстрация движка, отдельное приложение поверх Host.
+  -->
+
+</Project>

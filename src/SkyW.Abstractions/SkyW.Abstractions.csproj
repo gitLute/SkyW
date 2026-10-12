@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Abstractions</RootNamespace>
+  </PropertyGroup>
+
+  <!--
+    Слой 1, контракты движка.
+
+    Внешних зависимостей нет: только BCL. Это делает проект единственным,
+    который не ссылается ни на кого, и гарантирует, что ни Silk.NET, ни Jolt,
+    ни Friflo, ни Hexa.NET.Math не просочатся в прикладной код
+    (docs/engine-architecture.md разделы 1.2 и 7).
+
+    Внутренний формат векторов, кватернионов и трансформов — System.Numerics
+    (docs/stack-constraints.md раздел 3).
+
+    Имена интерфейсов не совпадают с именами типов внешних библиотек
+    (docs/engine-architecture.md раздел 1.2).
+
+    Каталоги внутри:
+      Time/         IClock, Tick, FixedStep
+      Logging/      ILog, ILogSink, LogLevel
+      Storage/      IFileSystem, IAssetSource, IAssetHandle
+      Input/        IInputSource, InputFrame, KeyboardState, MouseState, GamepadState
+      Windowing/    IWindowHost, IWindow, WindowMode, Extent
+      Ecs/          IEntityStore, EntityRef, IQuery, ComponentId, IComponentRegistry
+      Physics/      IPhysicsWorld, IPhysicsBody, IShape, BodyDesc, MotionKind, RayHit
+      Rendering/    IRenderDevice, IRenderTarget, ITexture2D, IMesh, IShaderProgram, ...
+      Scheduling/   ISnapshotChannel, ISnapshot, SimulationStage
+      Scenes/       ISceneBuilder, SceneContext, IPrefabManager, IPrefab
+      Diagnostics/  IProfiler, StageStat, QualityLevel
+  -->
+
+</Project>

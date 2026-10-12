@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Mathematics</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hexa.NET.Math" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+  </ItemGroup>
+
+  <!--
+    Слой 2. Единственный владелец Hexa.NET.Math.
+
+    Алиас Hx объявлен здесь, в GlobalUsings.cs, и не экспортируется наружу:
+    снаружи проекта видно только собственные типы движка, а не Hx.BoundingBox
+    (docs/stack-constraints.md раздел 4, рекомендация вынести алиасы в модуль математики).
+
+    Наружу отдаёт собственные типы поверх System.Numerics: BoundingVolume,
+    FrustumVolume, Transform. Типы Hexa.NET.Math наружу не выходят.
+
+    Каталоги внутри:
+      Bounds/    отсечение, обёртки над BoundingBox и BoundingFrustum
+      Space/     трансформы, look-at, интерполяция, матрицы на System.Numerics
+      Curves/    CatmullRom, Bezier, сплайны маршрута камеры
+      Noise/     Perlin, Simplex, ValueNoise
+      Sky/       Preetham, Hosek-Wilkie
+      Color/     палитра и преобразования цвета
+      Geometry/  пересечения, наклонные плоскости, хитбокс
+  -->
+
+</Project>
