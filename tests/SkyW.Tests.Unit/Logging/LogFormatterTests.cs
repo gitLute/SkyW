@@ -4,10 +4,6 @@ using Xunit;
 
 namespace SkyW.Tests.Unit.Logging;
 
-/// <summary>
-/// Формат строки журнала: одно правило на все выводы и подставной источник
-/// времени вместо системных часов (docs/engine-architecture.md раздел 9).
-/// </summary>
 [Collection(ConsoleCollection.Name)]
 public sealed class LogFormatterTests
 {
@@ -85,8 +81,8 @@ public sealed class LogFormatterTests
     [Fact]
     public void EmptyTimestampFormat_IsRejected()
     {
-        Assert.Throws<ArgumentException>(() => new LogFormatter(string.Empty));
-        Assert.Throws<ArgumentNullException>(() => new LogFormatter(null!));
+        Assert.Throws<ArgumentException>(() => _ = new LogFormatter(string.Empty));
+        Assert.Throws<ArgumentNullException>(() => _ = new LogFormatter(null!));
     }
 
     [Fact]
@@ -100,8 +96,7 @@ public sealed class LogFormatterTests
     [Fact]
     public void EverySink_ProducesTheSameLine()
     {
-        // Правило форматирования одно на все выводы: консоль, файл и буфер обязаны
-        // давать побайтово одну строку.
+        // Одно правило форматирования на все выводы: строки должны совпасть побайтово.
         using TempDirectory directory = new();
         LogFormatter formatter = new(clock: () => Moment);
         string path = directory.File("engine.log");

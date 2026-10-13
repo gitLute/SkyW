@@ -3,28 +3,17 @@ using Xunit;
 
 namespace SkyW.Tests.Unit.Logging;
 
-/// <summary>
-/// Тесты, перехватывающие <see cref="Console"/>, идут без параллелизации:
-/// <c>Console.SetOut</c> меняет состояние процесса, и два таких теста сразу
-/// перехватывают вывод друг друга.
-/// </summary>
+// Тесты, перехватывающие Console, идут без параллелизации: Console.SetOut меняет
+// состояние процесса, и два таких теста сразу перехватывают вывод друг друга.
 [CollectionDefinition(Name, DisableParallelization = true)]
 public sealed class ConsoleCollection
 {
     public const string Name = "console";
 }
 
-/// <summary>
-/// Запись, принятая приёмником: уровень и готовый текст.
-/// </summary>
-/// <param name="Level">Уровень сообщения.</param>
-/// <param name="Message">Текст сообщения без форматирования.</param>
 internal sealed record LogEntry(LogLevel Level, string Message);
 
-/// <summary>
-/// Приёмник, копящий принятые сообщения: проверяет, что дошло и в каком
-/// порядке.
-/// </summary>
+// Приёмник, копящий принятые сообщения: проверяет, что дошло и в каком порядке.
 internal sealed class RecordingLogSink : ILogSink
 {
     private readonly List<LogEntry> _entries = [];
@@ -54,10 +43,7 @@ internal sealed class RecordingLogSink : ILogSink
     }
 }
 
-/// <summary>
-/// Приёмник, который всегда падает: проверяет, что сбой вывода не роняет
-/// кадр и не мешает остальным приёмникам.
-/// </summary>
+// Приёмник, который всегда падает: проверяет, что сбой вывода не роняет кадр.
 internal sealed class ThrowingLogSink : ILogSink
 {
     private int _writeAttempts;
@@ -73,10 +59,7 @@ internal sealed class ThrowingLogSink : ILogSink
     }
 }
 
-/// <summary>
-/// Приёмник с явным счётчиком освобождения: проверяет, чьим приёмником владеет
-/// журнал.
-/// </summary>
+// Приёмник со счётчиком освобождения: проверяет, чьим приёмником владеет журнал.
 internal sealed class TrackedDisposableSink : ILogSink, IDisposable
 {
     public bool IsDisposed { get; private set; }
@@ -90,10 +73,7 @@ internal sealed class TrackedDisposableSink : ILogSink, IDisposable
     public void Dispose() => IsDisposed = true;
 }
 
-/// <summary>
-/// Временный каталог теста: удаляется вместе с тестом, чтобы файлы журнала не
-/// оставались в системном каталоге.
-/// </summary>
+// Каталог теста удаляется вместе с тестом, чтобы файлы журнала не оставались в системном.
 internal sealed class TempDirectory : IDisposable
 {
     public TempDirectory()
@@ -118,7 +98,7 @@ internal sealed class TempDirectory : IDisposable
         }
         catch (DirectoryNotFoundException)
         {
-            // Каталог уже удалён: ничего страшного.
+            // Каталог уже удалён.
         }
         catch (IOException)
         {

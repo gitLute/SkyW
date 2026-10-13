@@ -5,10 +5,6 @@ using Xunit;
 
 namespace SkyW.Tests.Unit.Logging;
 
-/// <summary>
-/// Файловый приёмник: журнал переживает перезапуск движка, поэтому файл
-/// дописывается, не переживает переполнения и не остаётся незакрытым.
-/// </summary>
 public sealed class FileLogSinkTests
 {
     [Fact]
@@ -79,8 +75,7 @@ public sealed class FileLogSinkTests
             sink.Write(LogLevel.Error, "движок упал");
         }
 
-        // Строка ушла на диск сразу: буфера, теряющего последние записи при падении,
-        // у приёмника нет.
+        // Буфера, теряющего последние записи при падении, у приёмника нет.
         Assert.Contains("движок упал", File.ReadAllText(path), StringComparison.Ordinal);
     }
 
@@ -174,8 +169,7 @@ public sealed class FileLogSinkTests
             sink.Write(LogLevel.Information, "вторая строка");
         }
 
-        // Предел в один байт: сворачивание идёт до записи, поэтому в свежем журнале
-        // всегда есть хоть одна запись, а не пустой файл.
+        // Свёртка идёт до записи: в свежем журнале всегда есть запись, а не пустой файл.
         string text = File.ReadAllText(path);
         Assert.Contains("вторая строка", text, StringComparison.Ordinal);
         Assert.DoesNotContain("первая строка", text, StringComparison.Ordinal);
@@ -193,8 +187,7 @@ public sealed class FileLogSinkTests
 
         Assert.Throws<ObjectDisposedException>(() => sink.Write(LogLevel.Error, "после освобождения"));
 
-        // Flush после освобождения не бросает: закрывать уже нечего, а сбой при
-        // освобождении не должен маскироваться (docs/engine-architecture.md раздел 8).
+        // Закрывать уже нечего, и сбой при освобождении не должен маскироваться.
         sink.Flush();
     }
 

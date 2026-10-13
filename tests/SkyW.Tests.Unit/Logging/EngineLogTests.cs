@@ -4,10 +4,7 @@ using Xunit;
 
 namespace SkyW.Tests.Unit.Logging;
 
-/// <summary>
-/// Контракт журнала: раскладка по приёмникам, фильтр уровня и живучесть кадра
-/// при сбое вывода (docs/engine-architecture.md разделы 1.2 и 8).
-/// </summary>
+[Collection(ConsoleCollection.Name)]
 public sealed class EngineLogTests
 {
     [Fact]
@@ -67,8 +64,7 @@ public sealed class EngineLogTests
     [Fact]
     public void LoggerThreshold_IsUpperBound_AndSinkThresholdIsItsOwn()
     {
-        // Журнал пропускает всё ниже Warning, приёмник — всё ниже Error:
-        // порог журнала это верхняя граница, собственный фильтр остаётся у приёмника.
+        // Журнал пропускает всё ниже Warning, приёмник — всё ниже Error.
         RecordingLogSink sink = new() { MinimumLevel = LogLevel.Error };
         using EngineLog log = new(LogLevel.Warning, sink);
 
@@ -166,7 +162,7 @@ public sealed class EngineLogTests
 
         log.Dispose();
 
-        // Приёмник передан в конструктор и остаётся во владении вызывающего.
+        // Передан в конструктор, значит остаётся во владении вызывающего.
         Assert.False(sink.IsDisposed);
     }
 
@@ -227,7 +223,7 @@ public sealed class EngineLogTests
     [Fact]
     public async Task MessagesFromBothEngineThreads_AreAllDelivered()
     {
-        // docs/answers.md: максимум два потока — симуляция и рендер.
+        // docs/answers.md: максимум два потока, симуляция и рендер.
         const int ThreadCount = 2;
         const int MessagesPerThread = 500;
 

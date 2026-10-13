@@ -2,17 +2,8 @@ using SkyW.Abstractions.Logging;
 
 namespace SkyW.Diagnostics.Logging;
 
-/// <summary>
-/// Журнал движка: раскладывает сообщения по приёмникам.
-/// </summary>
-/// <remarks>
-/// Инстанциируемый по требованию подсистемы: у движка нет общего журнала, нужный
-/// создаётся на старте, передаётся дальше и освобождается вместе с владельцем.
-/// </remarks>
-/// <remarks>
-/// Порог уровня проверяется до сборки текста: чтобы не платить за строку, которая
-/// всё равно отбросится, дорогой вызов оборачивают проверкой <see cref="IsEnabled"/>.
-/// </remarks>
+// Инстанцируемый: у движка нет общего журнала, нужный создаётся на старте и
+// освобождается с владельцем. Порог проверяется до сборки текста сообщения.
 public sealed class EngineLog : ILog, IDisposable
 {
     private readonly ILogSink[] _sinks;
@@ -20,35 +11,20 @@ public sealed class EngineLog : ILog, IDisposable
     private readonly Lock _writeLock = new();
 
     private LogLevel _minimumLevel;
+
+    // Приёмники из фабрик принадлежат журналу, переданные в конструктор — нет.
     private bool _ownsSinks;
     private bool _disposed;
 
-    /// <summary>
-    /// Создаёт журнал с порогом <see cref="LogLevel.Information"/>.
-    /// </summary>
-    /// <param name="sinks">
-    /// Повторы одного экземпляра отбрасываются: иначе общий приёмник попал бы в
-    /// список дважды и вывел каждое сообщение дважды.
-    /// </param>
+    // Повторы одного экземпляра отбрасываются: иначе общий приёмник попал бы в
+    // список дважды и вывел каждое сообщение дважды.
     public EngineLog(params ILogSink[] sinks)
         : this(LogLevel.Information, sinks)
     {
     }
 
-    /// <summary>
-    /// Создаёт журнал с заданным порогом уровня.
-    /// </summary>
-    /// <param name="minimumLevel">
-    /// Порог журнала — верхняя граница; приёмник может фильтровать строже своим
-    /// порогом.
-    /// </param>
-    /// <param name="sinks">
-    /// Остаются во владении вызывающего: приёмник может быть общим для нескольких
-    /// журналов. Освобождаются только те, что созданы фабриками.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Список приёмников не задан либо в нём есть пустой элемент.
-    /// </exception>
+    // Порог журнала — верхняя граница; приёмник может фильтровать строже своим порогом.
+    // Приёмники остаются во владении вызывающего: они могут быть общими у журналов.
     public EngineLog(LogLevel minimumLevel, params ILogSink[] sinks)
     {
         ArgumentNullException.ThrowIfNull(sinks);
@@ -58,23 +34,16 @@ public sealed class EngineLog : ILog, IDisposable
         _disabledSinks = new bool[_sinks.Length];
     }
 
-    /// <summary>
-    /// Порог уровня журнала: сообщения ниже него не собираются и не пишутся.
-    /// </summary>
-    /// <remarks>
-    /// Менять до запуска потоков движка: поле читается и пишется отдельно, гонки
-    /// нет, но порядок «поднять порог, потом запустить симуляцию» предпочтительнее.
-    /// </remarks>
+    // Менять до запуска потоков движка: гонки нет, но порядок «поднять порог, потом
+    // запустить симуляцию» предпочтительнее.
     public LogLevel MinimumLevel
     {
         get => _minimumLevel;
         set => _minimumLevel = value;
     }
 
-    /// <summary>Приёмники журнала в порядке вызова.</summary>
     public IReadOnlyList<ILogSink> Sinks => _sinks;
 
-    /// <inheritdoc/>
     public bool IsEnabled(LogLevel level)
     {
         if (level < _minimumLevel)
@@ -93,14 +62,8 @@ public sealed class EngineLog : ILog, IDisposable
         return false;
     }
 
-    /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException">Текст сообщения не задан.</exception>
-    /// <exception cref="ObjectDisposedException">Журнал уже освобождён.</exception>
     public void Log(LogLevel level, string message) => Write(level, message, exception: null);
 
-    /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException">Текст сообщения или исключение не заданы.</exception>
-    /// <exception cref="ObjectDisposedException">Журнал уже освобождён.</exception>
     public void Log(LogLevel level, string message, Exception exception)
     {
         ArgumentNullException.ThrowIfNull(exception);
@@ -108,39 +71,27 @@ public sealed class EngineLog : ILog, IDisposable
         Write(level, message, exception);
     }
 
-    /// <inheritdoc/>
     public void Debug(string message) => Log(LogLevel.Debug, message);
 
-    /// <inheritdoc/>
     public void Debug(string message, Exception exception) =>
         Log(LogLevel.Debug, message, exception);
 
-    /// <inheritdoc/>
     public void Information(string message) => Log(LogLevel.Information, message);
 
-    /// <inheritdoc/>
     public void Information(string message, Exception exception) =>
         Log(LogLevel.Information, message, exception);
 
-    /// <inheritdoc/>
     public void Warning(string message) => Log(LogLevel.Warning, message);
 
-    /// <inheritdoc/>
     public void Warning(string message, Exception exception) =>
         Log(LogLevel.Warning, message, exception);
 
-    /// <inheritdoc/>
     public void Error(string message) => Log(LogLevel.Error, message);
 
-    /// <inheritdoc/>
     public void Error(string message, Exception exception) =>
         Log(LogLevel.Error, message, exception);
 
-    /// <summary>Освобождает приёмники, созданные фабриками этого класса.</summary>
-    /// <remarks>
-    /// Переданные в конструктор не трогаются: они могут быть общими. Упавший
-    /// приёмник всё равно освобождается — иначе остался бы незакрытый файл.
-    /// </remarks>
+    // Упавший приёмник всё равно освобождается: иначе остался бы незакрытый файл.
     public void Dispose()
     {
         lock (_writeLock)
@@ -167,20 +118,14 @@ public sealed class EngineLog : ILog, IDisposable
         }
     }
 
-    /// <summary>Создаёт журнал только для консоли.</summary>
-    /// <returns>Журнал, которому принадлежит приёмник.</returns>
     public static EngineLog CreateConsole(LogLevel minimumLevel = LogLevel.Information) =>
         new(minimumLevel, new ConsoleLogSink(minimumLevel)) { _ownsSinks = true };
 
-    /// <summary>Создаёт журнал только для файла.</summary>
-    /// <returns>Журнал, которому принадлежит приёмник.</returns>
     public static EngineLog CreateFile(
         string path,
         LogLevel minimumLevel = LogLevel.Information) =>
         new(minimumLevel, new FileLogSink(path, minimumLevel)) { _ownsSinks = true };
 
-    /// <summary>Создаёт журнал для консоли и файла одновременно.</summary>
-    /// <returns>Журнал, которому принадлежат оба приёмника.</returns>
     public static EngineLog CreateConsoleAndFile(
         string path,
         LogLevel minimumLevel = LogLevel.Information) =>
@@ -189,8 +134,6 @@ public sealed class EngineLog : ILog, IDisposable
             _ownsSinks = true,
         };
 
-    /// <summary>Создаёт журнал с кольцевым буфером в памяти, без файла и консоли.</summary>
-    /// <returns>Журнал, из приёмника которого читается снимок последних строк.</returns>
     public static EngineLog CreateRingBuffer(
         int capacity = RingBufferLogSink.DefaultCapacity,
         LogLevel minimumLevel = LogLevel.Information)
@@ -217,10 +160,8 @@ public sealed class EngineLog : ILog, IDisposable
         return unique.ToArray();
     }
 
-    /// <remarks>
-    /// Освобождение не учитывается: проверка отвечает за уровень, а не за срок
-    /// жизни. После освобождения запись бросает <see cref="ObjectDisposedException"/>.
-    /// </remarks>
+    // Освобождение здесь не учитывается: проверка отвечает за уровень, а не за срок
+    // жизни. После освобождения запись бросает ObjectDisposedException.
     private void Write(LogLevel level, string message, Exception? exception)
     {
         ArgumentNullException.ThrowIfNull(message);
@@ -251,8 +192,8 @@ public sealed class EngineLog : ILog, IDisposable
                 // исключение намеренно, иначе сбой вывода роняет кадр.
                 catch (Exception)
                 {
-                    // Приёмник отключается, чтобы каждое следующее сообщение не
-                    // платило за то же исключение.
+                    // Отключаем приёмник, чтобы следующее сообщение не платило за то же
+                    // исключение; остальные приёмники продолжают работать.
                     _disabledSinks[index] = true;
                 }
             }

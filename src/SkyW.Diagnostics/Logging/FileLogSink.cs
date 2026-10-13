@@ -3,25 +3,12 @@ using SkyW.Abstractions.Logging;
 
 namespace SkyW.Diagnostics.Logging;
 
-/// <summary>
-/// Приёмник сообщений, дописывающий их в файл.
-/// </summary>
-/// <remarks>
-/// В отличие от консоли файл переживает перезапуск, поэтому открывается сразу и
-/// пишется без буфера: иначе последние записи терялись бы именно в том запуске,
-/// ради которого журнал и нужен.
-/// </remarks>
-/// <remarks>
-/// Файл открыт на чтение и удаление извне: журнал можно смотреть во время игры,
-/// не останавливая движок. Работа идёт через <see cref="FileStream"/> напрямую,
-/// мимо слоя ассетов: путь задаёт хост при старте.
-/// </remarks>
+// Файл переживает перезапуск движка: открывается сразу и пишется без буфера, иначе
+// последние записи терялись бы в том запуске, ради которого журнал и нужен.
 public sealed class FileLogSink : ILogSink, IDisposable
 {
-    /// <summary>
-    /// UTF-8 без метки порядка байтов: метка ломает разбор журнала сторонними
-    /// инструментами.
-    /// </summary>
+    // UTF-8 без метки порядка байтов: метка ломает разбор журнала сторонними
+    // инструментами.
     private static readonly UTF8Encoding Utf8NoBom = new(encoderShouldEmitUTF8Identifier: false);
 
     private const int BufferSize = 1024;
@@ -37,26 +24,8 @@ public sealed class FileLogSink : ILogSink, IDisposable
     private StreamWriter? _writer;
     private bool _disposed;
 
-    /// <summary>
-    /// Создаёт приёмник и открывает файл на дозапись.
-    /// </summary>
-    /// <param name="path">
-    /// Недостающие каталоги создаются, существующий файл дописывается: несколько
-    /// запусков подряд остаются в одном файле.
-    /// </param>
-    /// <param name="maxFileSizeBytes">
-    /// Предел размера, ноль — без предела. Файл сворачивается перед строкой,
-    /// которая в предел не влезет, поэтому свежий журнал не остаётся пустым.
-    /// </param>
-    /// <param name="retainedFiles">
-    /// Сколько прошлых файлов хранить как <c>.1</c>, <c>.2</c> и так далее.
-    /// Ноль вместе с ненулевым пределом — прошлый файл удаляется без сохранения.
-    /// </param>
-    /// <exception cref="ArgumentException">
-    /// Путь пустой либо предел размера или число хранимых файлов отрицательны.
-    /// </exception>
-    /// <exception cref="IOException">Файл не удалось открыть.</exception>
-    /// <exception cref="UnauthorizedAccessException">Нет прав на файл.</exception>
+    // maxFileSizeBytes — предел размера, ноль без предела, retainedFiles — сколько
+    // прошлых файлов хранить как .1, .2. Каталоги создаются, файл дописывается.
     public FileLogSink(
         string path,
         LogLevel minimumLevel = LogLevel.Information,
@@ -78,15 +47,10 @@ public sealed class FileLogSink : ILogSink, IDisposable
         OpenWriter();
     }
 
-    /// <summary>Путь к текущему файлу журнала.</summary>
     public string FilePath => _path;
 
-    /// <inheritdoc/>
     public bool IsEnabled(LogLevel level) => level >= _minimumLevel;
 
-    /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException">Текст сообщения не задан.</exception>
-    /// <exception cref="ObjectDisposedException">Приёмник уже освобождён.</exception>
     public void Write(LogLevel level, string message)
     {
         ArgumentNullException.ThrowIfNull(message);
@@ -117,11 +81,8 @@ public sealed class FileLogSink : ILogSink, IDisposable
         }
     }
 
-    /// <summary>Дописывает накопленное на диск.</summary>
-    /// <remarks>
-    /// Строки и так уходят на диск сразу, поэтому метод нужен только для проверки
-    /// состояния после сбоя записи. После освобождения ничего не делает.
-    /// </remarks>
+    // Строки и так уходят на диск сразу: метод нужен только для проверки состояния
+    // после сбоя записи.
     public void Flush()
     {
         lock (_writeLock)
@@ -130,7 +91,6 @@ public sealed class FileLogSink : ILogSink, IDisposable
         }
     }
 
-    /// <summary>Закрывает файл. Повторный вызов безопасен.</summary>
     public void Dispose()
     {
         lock (_writeLock)
@@ -188,15 +148,12 @@ public sealed class FileLogSink : ILogSink, IDisposable
         }
         catch (IOException)
         {
-            // Приёмник уже освобождается: исключение здесь затерело бы результат
-            // освобождения, а изменить уже ничего нельзя.
+            // Приёмник уже освобождается: исключение затерело бы результат освобождения,
+            // а изменить уже ничего нельзя.
         }
     }
 
-    /// <summary>
-    /// Сворачивает переполненный файл: уводит его в сторонний, сдвигает прежние
-    /// и продолжает писать в новый.
-    /// </summary>
+    // Свёртка: текущий файл уходит в сторонний, прежние сдвигаются, запись идёт в новый.
     private void Roll()
     {
         CloseWriter();
@@ -230,13 +187,7 @@ public sealed class FileLogSink : ILogSink, IDisposable
 
     private string RolledPath(int index) => $"{_path}.{index}";
 
-    /// <summary>
-    /// Размер строки вместе с переводом строки — столько места она займёт.
-    /// </summary>
-    /// <remarks>
-    /// Перевод строки тот же, что у <see cref="StreamWriter"/>, поэтому расчёт
-    /// совпадает с фактической записью.
-    /// </remarks>
+    // Перевод строки тот же, что у StreamWriter, поэтому расчёт совпадает с записью.
     private long RequiredBytes(string line) =>
         Utf8NoBom.GetByteCount(line) + _newLineByteCount;
 }

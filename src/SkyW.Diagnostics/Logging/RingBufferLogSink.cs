@@ -3,24 +3,11 @@ using SkyW.Abstractions.Logging;
 
 namespace SkyW.Diagnostics.Logging;
 
-/// <summary>
-/// Приёмник сообщений, хранящий последние строки в памяти по кругу.
-/// </summary>
-/// <remarks>
-/// Нужен там, где файла нет: инструменты контента не пишут журналы на диск, а
-/// хост при аварийном завершении хочет показать последние строки до исчезновения
-/// процесса.
-/// </remarks>
-/// <remarks>
-/// Ёмкость фиксирована при создании и строки не выделяются заново: приёмник не
-/// растёт и не делает аллокаций на каждом сообщении.
-/// </remarks>
+// Хранит последние строки в памяти там, где файла нет: инструменты контента журналы
+// не пишут, а хост при аварии хочет показать последние строки до гибели процесса.
 public sealed class RingBufferLogSink : ILogSink
 {
-    /// <summary>
-    /// Ёмкость по умолчанию: две сотни строк помещают в буфер последние секунды
-    /// работы и не занимают заметной памяти.
-    /// </summary>
+    // Ёмкость по умолчанию: сотни строк хватает на последние секунды работы.
     public const int DefaultCapacity = 256;
 
     private readonly LogLevel _minimumLevel;
@@ -32,14 +19,8 @@ public sealed class RingBufferLogSink : ILogSink
     private int _count;
     private long _accepted;
 
-    /// <summary>
-    /// Создаёт приёмник с фиксированной ёмкостью.
-    /// </summary>
-    /// <param name="capacity">
-    /// Сколько последних строк хранить: переполнение перезаписывает самую старую,
-    /// а не отбрасывает новую.
-    /// </param>
-    /// <exception cref="ArgumentOutOfRangeException">Ёмкость не положительна.</exception>
+    // Ёмкость фиксирована: переполнение перезаписывает самую старую строку, а не
+    // отбрасывает новую, и аллокаций на каждое сообщение не появляется.
     public RingBufferLogSink(
         int capacity = DefaultCapacity,
         LogLevel minimumLevel = LogLevel.Information,
@@ -52,10 +33,8 @@ public sealed class RingBufferLogSink : ILogSink
         _formatter = formatter ?? new LogFormatter();
     }
 
-    /// <summary>Сколько строк буфер хранит всего.</summary>
     public int Capacity => _lines.Length;
 
-    /// <summary>Сколько строк хранится сейчас: не больше <see cref="Capacity"/>.</summary>
     public int Count
     {
         get
@@ -67,13 +46,8 @@ public sealed class RingBufferLogSink : ILogSink
         }
     }
 
-    /// <summary>
-    /// Сколько сообщений принято за всё время, включая затёртые переполнением.
-    /// </summary>
-    /// <remarks>
-    /// Не сбрасывается при переполнении и в <see cref="Clear"/>: по нему видно,
-    /// сколько сообщений прошло за запуск.
-    /// </remarks>
+    // Не сбрасывается при переполнении и в Clear: по нему видно, сколько сообщений
+    // прошло за запуск.
     public long AcceptedCount
     {
         get
@@ -85,11 +59,8 @@ public sealed class RingBufferLogSink : ILogSink
         }
     }
 
-    /// <inheritdoc/>
     public bool IsEnabled(LogLevel level) => level >= _minimumLevel;
 
-    /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException">Текст сообщения не задан.</exception>
     public void Write(LogLevel level, string message)
     {
         ArgumentNullException.ThrowIfNull(message);
@@ -115,13 +86,8 @@ public sealed class RingBufferLogSink : ILogSink
         }
     }
 
-    /// <summary>
-    /// Снимок хранимых строк от самой старой к самой новой.
-    /// </summary>
-    /// <returns>
-    /// Копия содержимого: читатель не держит блокировку приёмника и может
-    /// работать с ней, пока пишет поток симуляции.
-    /// </returns>
+    // Копия, а не срез массива: читатель не держит блокировку приёмника и может
+    // работать со снимком, пока пишет поток симуляции.
     public IReadOnlyList<string> Snapshot()
     {
         lock (_writeLock)
@@ -138,7 +104,6 @@ public sealed class RingBufferLogSink : ILogSink
         }
     }
 
-    /// <summary>Снимок строк, склеенных переводом строки платформы.</summary>
     public string SnapshotText()
     {
         IReadOnlyList<string> lines = Snapshot();
@@ -163,9 +128,6 @@ public sealed class RingBufferLogSink : ILogSink
         return builder.ToString();
     }
 
-    /// <summary>
-    /// Очищает буфер, не трогая счётчик принятых сообщений.
-    /// </summary>
     public void Clear()
     {
         lock (_writeLock)

@@ -4,16 +4,10 @@ using Xunit;
 
 namespace SkyW.Tests.Unit.Logging;
 
-/// <summary>
-/// Кольцевой приёмник: хранит последние строки в памяти, не растёт и не
-/// выделяет память на каждом сообщении.
-/// </summary>
 public sealed class RingBufferLogSinkTests
 {
-    /// <summary>
-    /// Текст сообщения без отметки времени и имени потока: имя потока в строке
-    /// не предсказуемо, а проверить надо именно порядок сообщений.
-    /// </summary>
+    // Текст сообщения без отметки времени и имени потока: имя потока не предсказуемо,
+    // а проверить надо именно порядок сообщений.
     private static string MessageOf(string line)
     {
         int index = line.LastIndexOf("]: ", StringComparison.Ordinal);
@@ -72,8 +66,7 @@ public sealed class RingBufferLogSinkTests
 
         sink.Clear();
 
-        // Счётчик принадлежит приёмнику, а не содержимому: по нему видно, сколько
-        // сообщений прошло за запуск.
+        // Счётчик принадлежит приёмнику, а не содержимому.
         Assert.Equal(5, sink.AcceptedCount);
         Assert.Equal(0, sink.Count);
         Assert.Empty(sink.Snapshot());
@@ -135,7 +128,7 @@ public sealed class RingBufferLogSinkTests
     [Fact]
     public async Task WritesFromBothEngineThreads_KeepTheBufferConsistent()
     {
-        // docs/answers.md: максимум два потока — симуляция и рендер.
+        // docs/answers.md: максимум два потока, симуляция и рендер.
         const int ThreadCount = 2;
         const int MessagesPerThread = 400;
 

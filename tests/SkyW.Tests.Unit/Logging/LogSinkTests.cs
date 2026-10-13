@@ -4,10 +4,6 @@ using Xunit;
 
 namespace SkyW.Tests.Unit.Logging;
 
-/// <summary>
-/// Приёмники без файла: заглушка и консоль — единственное разрешённое место
-/// обращения к <see cref="Console"/> в подсистемах движка.
-/// </summary>
 [Collection(ConsoleCollection.Name)]
 public sealed class LogSinkTests
 {
