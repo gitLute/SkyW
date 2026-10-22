@@ -27,7 +27,7 @@
       Ecs/          IEntityStore, EntityRef, IQuery, ComponentId, IComponentRegistry
       Physics/      IPhysicsWorld, IPhysicsBody, IShape, BodyDesc, MotionKind, RayHit
       Rendering/    IRenderDevice, IRenderTarget, ITexture2D, IMesh, IShaderProgram, ...
-      Scheduling/   ISnapshotChannel, ISnapshot, SimulationStage
+      Scheduling/   IStateStream, StateBatch, SimulationStage, ISimulationClock
       Scenes/       ISceneBuilder, SceneContext, IPrefabManager, IPrefab
       Diagnostics/  IProfiler, StageStat, QualityLevel
   -->

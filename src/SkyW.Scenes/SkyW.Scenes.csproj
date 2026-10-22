@@ -11,18 +11,19 @@
   </ItemGroup>
 
   <!--
-    Слой 2. Сцена — данные, а не код: движок не содержит знаний о конкретных сценах
-    и типах объектов (docs/engine-architecture.md раздел 4.1).
+    Слой 2. Сцена — данные и скрипты сборки, а не код движка: движок не содержит
+    знаний о конкретных сценах и типах объектов (docs/engine-architecture.md раздел 4.1).
 
     Подтяжка через регистры, без рефлексии (раздел 4.2). Имя в регистре — единственный
     контракт между скриптом и движком; опечатка обязана обнаруживаться при старте.
 
     Каталоги внутри:
       Registries/  ComponentRegistry, SystemRegistry, MethodHandlerRegistry, проверка имён
-      Prefabs/     Prefab, PrefabManager, разрешение циклов, валидация до загрузки сцены
-      Building/    SceneBuilder, SceneContext
+      Prefabs/     Prefab, PrefabManager: исполняемые определения, печка в Build,
+                   граф вызовов, валидация до загрузки сцены
+      Building/    SceneBuilder, SceneContext: builder-права без доступа к миру
       Streaming/   загрузка по зонам, освобождение памяти при уходе
-      Scripts/     ISceneScript, ScriptHost: точка подключения языка скриптов (открытый вопрос)
+      Scripts/     ISceneScript, ScriptHost: генератор сцены и префабы — скрипты одного типа
   -->
 
 </Project>
