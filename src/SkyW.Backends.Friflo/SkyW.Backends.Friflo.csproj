@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../SkyW.Ecs/SkyW.Ecs.csproj" />
   </ItemGroup>
 
   <!--
@@ -22,15 +23,22 @@
 
     Внутри обхода ForEachEntity запрещены AddComponent и RemoveComponent:
     Friflo бросает StructuralChangeException. Запись в ref-параметр попадает в чанк
-    данных сразу, поэтому отдельная стадия структурных изменений не нужна внутри шага
-    (docs/stack-constraints.md раздел 5).
+    данных сразу, поэтому значения меняются на месте, а структурные команды идут
+    через очередь и применяются в S1 следующего шага
+    (docs/pending_architecture.md раздел 6.1).
 
     Метода Entity.SetComponent нет: замена значения компонента делается через
     Entity.AddComponent<T>(in T) вне обхода.
 
     Список компонентов хранится в одном месте, в реестре SkyW.Scenes, а не параллельно
-    в ECS (docs/engine-architecture.md раздел 4.4). Этот проект выполняет регистрацию
-    типов по списку из реестра.
+    в ECS (docs/engine-architecture.md раздел 4.4). Бэкенд не ссылается на SkyW.Scenes:
+    дескрипторы приходят через контракты слоя 1.
+
+    Каталоги внутри:
+      Store/         FrifloEntityStore: создание, удаление, доступ к компонентам
+      Queries/       обёртки запросов
+      Commands/      применение Spawn, Despawn, Set, Remove
+      Registration/  отображение ComponentId в типы Friflo
   -->
 
 </Project>

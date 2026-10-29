@@ -10,9 +10,7 @@ public sealed class FileLogSink : ILogSink, IDisposable
     // UTF-8 без метки порядка байтов: метка ломает разбор журнала сторонними
     // инструментами.
     private static readonly UTF8Encoding Utf8NoBom = new(encoderShouldEmitUTF8Identifier: false);
-
     private const int BufferSize = 1024;
-
     private readonly LogLevel _minimumLevel;
     private readonly LogFormatter _formatter;
     private readonly long _maxFileSizeBytes;
@@ -20,7 +18,6 @@ public sealed class FileLogSink : ILogSink, IDisposable
     private readonly string _path;
     private readonly int _newLineByteCount;
     private readonly Lock _writeLock = new();
-
     private StreamWriter? _writer;
     private bool _disposed;
 
@@ -36,14 +33,12 @@ public sealed class FileLogSink : ILogSink, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         ArgumentOutOfRangeException.ThrowIfNegative(maxFileSizeBytes);
         ArgumentOutOfRangeException.ThrowIfNegative(retainedFiles);
-
         _path = path;
         _minimumLevel = minimumLevel;
         _maxFileSizeBytes = maxFileSizeBytes;
         _retainedFiles = retainedFiles;
         _formatter = formatter ?? new LogFormatter();
         _newLineByteCount = Utf8NoBom.GetByteCount(Environment.NewLine);
-
         OpenWriter();
     }
 
@@ -54,19 +49,12 @@ public sealed class FileLogSink : ILogSink, IDisposable
     public void Write(LogLevel level, string message)
     {
         ArgumentNullException.ThrowIfNull(message);
-
-        if (!IsEnabled(level))
-        {
-            return;
-        }
-
+        if (!IsEnabled(level)) return;
         string line = _formatter.Format(level, message);
-
         lock (_writeLock)
         {
             StreamWriter writer = Writer;
             long required = RequiredBytes(line);
-
             // Свёртка до записи: иначе файл переполнился бы первой же строкой,
             // ушёл в сторонний и остался пустым.
             if (_maxFileSizeBytes > 0
@@ -76,7 +64,6 @@ public sealed class FileLogSink : ILogSink, IDisposable
                 Roll();
                 writer = Writer;
             }
-
             writer.WriteLine(line);
         }
     }
@@ -85,38 +72,25 @@ public sealed class FileLogSink : ILogSink, IDisposable
     // после сбоя записи.
     public void Flush()
     {
-        lock (_writeLock)
-        {
-            _writer?.Flush();
-        }
+        lock (_writeLock) _writer?.Flush();
     }
 
     public void Dispose()
     {
         lock (_writeLock)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
+            if (_disposed) return;
             _disposed = true;
             CloseWriter();
         }
     }
 
-    private StreamWriter Writer =>
-        _writer ?? throw new ObjectDisposedException(nameof(FileLogSink));
+    private StreamWriter Writer => _writer ?? throw new ObjectDisposedException(nameof(FileLogSink));
 
     private void OpenWriter()
     {
         string? directory = Path.GetDirectoryName(Path.GetFullPath(_path));
-
-        if (!string.IsNullOrEmpty(directory))
-        {
-            Directory.CreateDirectory(directory);
-        }
-
+        if (!string.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
         Stream stream = new FileStream(
             _path,
             FileMode.Append,
@@ -124,23 +98,14 @@ public sealed class FileLogSink : ILogSink, IDisposable
             FileShare.ReadWrite | FileShare.Delete,
             BufferSize,
             FileOptions.None);
-
-        _writer = new StreamWriter(stream, Utf8NoBom, BufferSize)
-        {
-            AutoFlush = true,
-        };
+        _writer = new StreamWriter(stream, Utf8NoBom, BufferSize) { AutoFlush = true };
     }
 
     private void CloseWriter()
     {
         StreamWriter? writer = _writer;
         _writer = null;
-
-        if (writer is null)
-        {
-            return;
-        }
-
+        if (writer is null) return;
         try
         {
             writer.Flush();
@@ -157,37 +122,23 @@ public sealed class FileLogSink : ILogSink, IDisposable
     private void Roll()
     {
         CloseWriter();
-
         if (_retainedFiles > 0)
         {
             File.Delete(RolledPath(_retainedFiles));
-
             for (int index = _retainedFiles - 1; index >= 1; index--)
             {
                 string from = RolledPath(index);
-
-                if (File.Exists(from))
-                {
-                    File.Move(from, RolledPath(index + 1), overwrite: true);
-                }
+                if (File.Exists(from)) File.Move(from, RolledPath(index + 1), overwrite: true);
             }
-
-            if (File.Exists(_path))
-            {
-                File.Move(_path, RolledPath(1), overwrite: true);
-            }
+            if (File.Exists(_path)) File.Move(_path, RolledPath(1), overwrite: true);
         }
         else
-        {
             File.Delete(_path);
-        }
-
         OpenWriter();
     }
 
     private string RolledPath(int index) => $"{_path}.{index}";
 
     // Перевод строки тот же, что у StreamWriter, поэтому расчёт совпадает с записью.
-    private long RequiredBytes(string line) =>
-        Utf8NoBom.GetByteCount(line) + _newLineByteCount;
+    private long RequiredBytes(string line) => Utf8NoBom.GetByteCount(line) + _newLineByteCount;
 }

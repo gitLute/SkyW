@@ -31,15 +31,20 @@ dotnet run --project tools/SkyW.Tools.Terrain
 | Слой | Проекты | Что внутри |
 |---|---|---|
 | 1. Контракты | `src/SkyW.Abstractions` | интерфейсы движка; внешних зависимостей нет |
-| 2. Подсистемы | `src/SkyW.Mathematics`, `src/SkyW.Diagnostics`, `src/SkyW.Content`, `src/SkyW.Scenes` | математика, профилирование, форматы ресурсов, сцены и префабы |
-| 3. Сервисы | `src/SkyW.Simulation`, `src/SkyW.Rendering`, `src/SkyW.Input` | планировщик и снимки, рендер-конвейер, логика ввода |
-| 4. Реализации | `src/SkyW.Backends.Silk`, `src/SkyW.Backends.Jolt`, `src/SkyW.Backends.Friflo` | единственное место, где допустимо обращение к внешним библиотекам |
-| Приложения | `src/SkyW.Host`, `src/SkyW.Sandbox` | композиция зависимостей и демонстрация |
+| 2. Подсистемы | `src/SkyW.Mathematics`, `src/SkyW.Diagnostics`, `src/SkyW.Content`, `src/SkyW.Scenes`, `src/SkyW.Ecs` | математика, профилирование, форматы ресурсов, сцены и префабы, типизированный шов ECS |
+| 3. Сервисы | `src/SkyW.Simulation`, `src/SkyW.Rendering`, `src/SkyW.Input` | планировщик и репликация, рендер-конвейер, логика ввода |
+| 4. Реализации | `src/SkyW.Backends.Silk`, `src/SkyW.Backends.Jolt`, `src/SkyW.Backends.Friflo` | реализации внешних библиотек; Friflo дополнительно нужен `SkyW.Ecs` |
+| Композиция | `src/SkyW.Engine` | сборка зависимостей, фазы запуска, каналы, вывод |
+| Приложения | `src/SkyW.Host`, `src/SkyW.Sandbox` | тонкая точка входа и демонстрация |
 
 Инструменты лежат в `tools/`, тесты — в `tests/`, контент — в `assets/`, документы — в `docs/`.
 
 Зависимости направлены внутрь: прикладной код обращается к интерфейсам, реализации
 их удовлетворяют. Граф ссылок проверяется тестом `tests/SkyW.Tests.Architecture`.
+
+`src/SkyW.Ecs` — единственный проект слоя 2, которому разрешён Friflo: маркер
+`IComponent` обязателен для типа компонента. Прикладные компоненты реализуют
+`SkyW.Ecs.IComponent`, не импортируя Friflo напрямую.
 
 ## Документация
 

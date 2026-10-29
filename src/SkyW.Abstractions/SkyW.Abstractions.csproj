@@ -24,12 +24,16 @@
       Storage/      IFileSystem, IAssetSource, IAssetHandle
       Input/        IInputSource, InputFrame, KeyboardState, MouseState, GamepadState
       Windowing/    IWindowHost, IWindow, WindowMode, Extent
-      Ecs/          IEntityStore, EntityRef, IQuery, ComponentId, IComponentRegistry
       Physics/      IPhysicsWorld, IPhysicsBody, IShape, BodyDesc, MotionKind, RayHit
-      Rendering/    IRenderDevice, IRenderTarget, ITexture2D, IMesh, IShaderProgram, ...
-      Scheduling/   IStateStream, StateBatch, SimulationStage, ISimulationClock
-      Scenes/       ISceneBuilder, SceneContext, IPrefabManager, IPrefab
+      Rendering/    IOutput, IRenderDevice, IRenderTarget, ITexture2D, IMesh, IShaderProgram, ...
+      Scheduling/   ISimulationClock, SimulationStage, IStage, ThreadingMode
+      Replication/  IStateStream, StateBatchHeader, StateBatchKind, VisualId
+      Scenes/       IPrefab, IPrefabManager, PrefabId
       Diagnostics/  IProfiler, StageStat, QualityLevel
+
+    Типизированный шов ECS живёт в SkyW.Ecs: Friflo требует маркер
+    IComponent на типе компонента, и этот маркер не помещается в слой без
+    внешних зависимостей (docs/answers.md, решение владельца).
   -->
 
 </Project>

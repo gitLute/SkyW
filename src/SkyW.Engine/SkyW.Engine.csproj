@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Engine</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <ProjectReference Include="../SkyW.Backends.Friflo/SkyW.Backends.Friflo.csproj" />
+    <ProjectReference Include="../SkyW.Diagnostics/SkyW.Diagnostics.csproj" />
+    <ProjectReference Include="../SkyW.Ecs/SkyW.Ecs.csproj" />
+    <ProjectReference Include="../SkyW.Mathematics/SkyW.Mathematics.csproj" />
+    <ProjectReference Include="../SkyW.Scenes/SkyW.Scenes.csproj" />
+    <ProjectReference Include="../SkyW.Simulation/SkyW.Simulation.csproj" />
+  </ItemGroup>
+
+  <!--
+    Композиция ядра: единственное место, где собираются зависимости, поднимаются
+    полосы и живут каналы (docs/pending_architecture.md разделы 2 и 7).
+
+    Проект не ссылается на Rendering, Input, Silk и Jolt: их швы — интерфейсы
+    слоя 1, реализации подключаются приложениями позже.
+
+    Каталоги внутри:
+      Composition/  EngineBuilder, EngineConfigurator, значения по умолчанию
+      Lifecycle/    Engine, FrameLoop, состояние и fail-fast
+      Channels/     SPSC-кольцо, пейсер, канал ввода, StateStream, keyframe
+      Output/       пустой потребитель вывода
+  -->
+
+</Project>

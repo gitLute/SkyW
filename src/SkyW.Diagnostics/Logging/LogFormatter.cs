@@ -9,7 +9,6 @@ public sealed class LogFormatter
 {
     // Местное время с миллисекундами: сортируется как текст.
     public const string DefaultTimestampFormat = "yyyy-MM-dd HH:mm:ss.fff";
-
     private readonly string _timestampFormat;
     private readonly Func<DateTimeOffset> _clock;
 
@@ -20,7 +19,6 @@ public sealed class LogFormatter
         Func<DateTimeOffset>? clock = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(timestampFormat);
-
         _timestampFormat = timestampFormat;
         _clock = clock ?? (static () => DateTimeOffset.Now);
     }
@@ -30,20 +28,17 @@ public sealed class LogFormatter
     public string Format(LogLevel level, string message)
     {
         ArgumentNullException.ThrowIfNull(message);
-
         return $"[{Timestamp()}] [{ThreadName()} / {LevelName(level)}]: {message}";
     }
 
     // Инвариантная культура: журнал читается одинаково при любой локали машины.
-    public string Timestamp() =>
-        _clock().ToString(_timestampFormat, CultureInfo.InvariantCulture);
+    public string Timestamp() => _clock().ToString(_timestampFormat, CultureInfo.InvariantCulture);
 
     // Без Thread.Name в строке остаётся только #<ManagedThreadId>: потоки симуляции
     // и рендера неразличимы.
     public string ThreadName()
     {
         Thread thread = Thread.CurrentThread;
-
         return thread.Name ?? $"#{thread.ManagedThreadId}";
     }
 

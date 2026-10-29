@@ -6,7 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../SkyW.Host/SkyW.Host.csproj" />
+    <ProjectReference Include="../SkyW.Content/SkyW.Content.csproj" />
+    <ProjectReference Include="../SkyW.Engine/SkyW.Engine.csproj" />
+    <ProjectReference Include="../SkyW.Scenes/SkyW.Scenes.csproj" />
   </ItemGroup>
 
   <!--
@@ -14,7 +16,7 @@
 
     Движок не содержит знаний о конкретных сценах или типах объектов
     (docs/engine-architecture.md раздел 4.1), поэтому всё прикладное живёт здесь,
-    а не в SkyW.Host.
+    а не в SkyW.Host. Композиция приходит из SkyW.Engine.
 
     Каталоги внутри:
       Scenes/   данные сцен, собираемые через регистры и менеджер префабов

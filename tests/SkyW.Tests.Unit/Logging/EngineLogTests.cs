@@ -8,22 +8,15 @@ namespace SkyW.Tests.Unit.Logging;
 public sealed class EngineLogTests
 {
     [Fact]
-    public void NullSinkList_IsRejected()
-    {
-        Assert.Throws<ArgumentNullException>(() => _ = new EngineLog((ILogSink[]?)null!));
-    }
+    public void NullSinkList_IsRejected() => Assert.Throws<ArgumentNullException>(() => _ = new EngineLog((ILogSink[]?)null!));
 
     [Fact]
-    public void NullSinkInsideList_IsRejected()
-    {
-        Assert.Throws<ArgumentNullException>(() => _ = new EngineLog(LogLevel.Debug, new RecordingLogSink(), null!));
-    }
+    public void NullSinkInsideList_IsRejected() => Assert.Throws<ArgumentNullException>(() => _ = new EngineLog(LogLevel.Debug, new RecordingLogSink(), null!));
 
     [Fact]
     public void DefaultThreshold_IsInformation()
     {
         using EngineLog log = new(new RecordingLogSink());
-
         Assert.Equal(LogLevel.Information, log.MinimumLevel);
         Assert.False(log.IsEnabled(LogLevel.Debug));
         Assert.True(log.IsEnabled(LogLevel.Information));
@@ -33,11 +26,8 @@ public sealed class EngineLogTests
     public void DuplicateSink_IsRegisteredOnce()
     {
         RecordingLogSink sink = new();
-
         using EngineLog log = new(LogLevel.Debug, sink, sink);
-
         log.Information("сообщение один раз");
-
         Assert.Single(log.Sinks);
         Assert.Single(sink.Entries);
     }
@@ -48,10 +38,8 @@ public sealed class EngineLogTests
         RecordingLogSink first = new();
         RecordingLogSink second = new();
         using EngineLog log = new(LogLevel.Debug, first, second);
-
         log.Information("сцена загружена");
         log.Warning("бюджет кадра исчерпан");
-
         Assert.Equal(
             ["сцена загружена", "бюджет кадра исчерпан"],
             first.Entries.Select(entry => entry.Message));
@@ -67,14 +55,11 @@ public sealed class EngineLogTests
         // Журнал пропускает всё ниже Warning, приёмник — всё ниже Error.
         RecordingLogSink sink = new() { MinimumLevel = LogLevel.Error };
         using EngineLog log = new(LogLevel.Warning, sink);
-
         Assert.False(log.IsEnabled(LogLevel.Information));
         Assert.False(log.IsEnabled(LogLevel.Warning));
         Assert.True(log.IsEnabled(LogLevel.Error));
-
         log.Warning("журнал пропустит, приёмник отбросит");
         log.Error("журнал и приёмник пропустят");
-
         LogEntry entry = Assert.Single(sink.Entries);
         Assert.Equal(LogLevel.Error, entry.Level);
     }
@@ -84,9 +69,7 @@ public sealed class EngineLogTests
     {
         RecordingLogSink sink = new();
         using EngineLog log = new(LogLevel.Warning, sink);
-
         log.Debug("дорогая строка, которую не должны даже собирать");
-
         Assert.False(log.IsEnabled(LogLevel.Debug));
         Assert.Empty(sink.Entries);
     }
@@ -96,9 +79,7 @@ public sealed class EngineLogTests
     {
         RecordingLogSink sink = new();
         using EngineLog log = new(LogLevel.Debug, sink);
-
         log.Error("сцена не загрузилась", new InvalidOperationException("не найден префаб игрока"));
-
         LogEntry entry = Assert.Single(sink.Entries);
         Assert.Equal(LogLevel.Error, entry.Level);
         Assert.StartsWith("сцена не загрузилась", entry.Message, StringComparison.Ordinal);
@@ -111,9 +92,7 @@ public sealed class EngineLogTests
     {
         RecordingLogSink sink = new();
         using EngineLog log = new(LogLevel.Debug, sink);
-
         log.Log(LogLevel.Information, "ровно то, что написано");
-
         Assert.Equal("ровно то, что написано", Assert.Single(sink.Entries).Message);
     }
 
@@ -121,7 +100,6 @@ public sealed class EngineLogTests
     public void NullMessage_IsRejected()
     {
         using EngineLog log = new(LogLevel.Debug, new RecordingLogSink());
-
         Assert.Throws<ArgumentNullException>(() => log.Error(null!));
     }
 
@@ -131,10 +109,8 @@ public sealed class EngineLogTests
         ThrowingLogSink broken = new();
         RecordingLogSink working = new();
         using EngineLog log = new(LogLevel.Debug, broken, working);
-
         log.Information("первое");
         log.Information("второе");
-
         // Второе сообщение не платит за то же исключение: приёмник отключён.
         Assert.Equal(1, broken.WriteAttempts);
         Assert.Equal(2, working.Entries.Count);
@@ -146,11 +122,8 @@ public sealed class EngineLogTests
     {
         ThrowingLogSink broken = new();
         using EngineLog log = new(LogLevel.Debug, broken);
-
         Assert.True(log.IsEnabled(LogLevel.Information));
-
         log.Information("приёмник падает");
-
         Assert.False(log.IsEnabled(LogLevel.Error));
     }
 
@@ -159,9 +132,7 @@ public sealed class EngineLogTests
     {
         TrackedDisposableSink sink = new();
         EngineLog log = new(LogLevel.Debug, sink);
-
         log.Dispose();
-
         // Передан в конструктор, значит остаётся во владении вызывающего.
         Assert.False(sink.IsDisposed);
     }
@@ -170,7 +141,6 @@ public sealed class EngineLogTests
     public void Dispose_IsIdempotent()
     {
         EngineLog log = new(LogLevel.Debug, new RecordingLogSink());
-
         log.Dispose();
         log.Dispose();
     }
@@ -180,9 +150,7 @@ public sealed class EngineLogTests
     {
         using TempDirectory directory = new();
         EngineLog log = EngineLog.CreateFile(directory.File("engine.log"));
-
         log.Dispose();
-
         Assert.Throws<ObjectDisposedException>(() => log.Error("после освобождения"));
     }
 
@@ -192,12 +160,9 @@ public sealed class EngineLogTests
         using TempDirectory directory = new();
         string path = directory.File("engine.log");
         EngineLog log = EngineLog.CreateFile(path);
-
         log.Information("сцена загружена");
         FileLogSink sink = Assert.IsType<FileLogSink>(Assert.Single(log.Sinks));
-
         log.Dispose();
-
         // Файл закрыт освобождением журнала: приёмник принадлежал журналу.
         Assert.Throws<ObjectDisposedException>(() => sink.Write(LogLevel.Information, "после освобождения"));
         Assert.Contains("сцена загружена", File.ReadAllText(path), StringComparison.Ordinal);
@@ -211,7 +176,6 @@ public sealed class EngineLogTests
         using EngineLog file = EngineLog.CreateFile(directory.File("file.log"));
         using EngineLog both = EngineLog.CreateConsoleAndFile(directory.File("both.log"));
         using EngineLog ring = EngineLog.CreateRingBuffer(capacity: 8);
-
         Assert.Equal(LogLevel.Information, console.MinimumLevel);
         Assert.IsType<ConsoleLogSink>(Assert.Single(console.Sinks));
         Assert.IsType<FileLogSink>(Assert.Single(file.Sinks));
@@ -226,23 +190,17 @@ public sealed class EngineLogTests
         // docs/answers.md: максимум два потока, симуляция и рендер.
         const int ThreadCount = 2;
         const int MessagesPerThread = 500;
-
         RecordingLogSink sink = new();
         using EngineLog log = new(LogLevel.Debug, sink);
-
         Task[] writers =
         [
             .. Enumerable.Range(0, ThreadCount).Select(worker => Task.Run(() =>
             {
                 for (int index = 0; index < MessagesPerThread; index++)
-                {
                     log.Information($"поток {worker}, сообщение {index}");
-                }
             })),
         ];
-
         await Task.WhenAll(writers);
-
         Assert.Equal(ThreadCount * MessagesPerThread, sink.Entries.Count);
     }
 }

@@ -18,17 +18,12 @@ internal sealed class RecordingLogSink : ILogSink
 {
     private readonly List<LogEntry> _entries = [];
     private readonly Lock _lock = new();
-
     public LogLevel MinimumLevel { get; init; } = LogLevel.Debug;
-
     public IReadOnlyList<LogEntry> Entries
     {
         get
         {
-            lock (_lock)
-            {
-                return _entries.ToArray();
-            }
+            lock (_lock) return _entries.ToArray();
         }
     }
 
@@ -36,10 +31,7 @@ internal sealed class RecordingLogSink : ILogSink
 
     public void Write(LogLevel level, string message)
     {
-        lock (_lock)
-        {
-            _entries.Add(new LogEntry(level, message));
-        }
+        lock (_lock) _entries.Add(new LogEntry(level, message));
     }
 }
 
@@ -47,9 +39,7 @@ internal sealed class RecordingLogSink : ILogSink
 internal sealed class ThrowingLogSink : ILogSink
 {
     private int _writeAttempts;
-
     public int WriteAttempts => Volatile.Read(ref _writeAttempts);
-
     public bool IsEnabled(LogLevel level) => true;
 
     public void Write(LogLevel level, string message)
@@ -63,13 +53,8 @@ internal sealed class ThrowingLogSink : ILogSink
 internal sealed class TrackedDisposableSink : ILogSink, IDisposable
 {
     public bool IsDisposed { get; private set; }
-
     public bool IsEnabled(LogLevel level) => true;
-
-    public void Write(LogLevel level, string message)
-    {
-    }
-
+    public void Write(LogLevel level, string message) { }
     public void Dispose() => IsDisposed = true;
 }
 
@@ -82,12 +67,10 @@ internal sealed class TempDirectory : IDisposable
             System.IO.Path.GetTempPath(),
             "SkyW.Tests.Unit",
             Guid.NewGuid().ToString("N"));
-
         Directory.CreateDirectory(Path);
     }
 
     public string Path { get; }
-
     public string File(string name) => System.IO.Path.Combine(Path, name);
 
     public void Dispose()

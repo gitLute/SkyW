@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
     <ProjectReference Include="../SkyW.Content/SkyW.Content.csproj" />
+    <ProjectReference Include="../SkyW.Ecs/SkyW.Ecs.csproj" />
     <ProjectReference Include="../SkyW.Mathematics/SkyW.Mathematics.csproj" />
   </ItemGroup>
 
@@ -18,7 +19,8 @@
     контракт между скриптом и движком; опечатка обязана обнаруживаться при старте.
 
     Каталоги внутри:
-      Registries/  ComponentRegistry, SystemRegistry, MethodHandlerRegistry, проверка имён
+      Registries/  ComponentRegistry, SystemRegistry, MethodHandlerRegistry,
+                   дескрипторы репликации, проверка имён
       Prefabs/     Prefab, PrefabManager: исполняемые определения, печка в Build,
                    граф вызовов, валидация до загрузки сцены
       Building/    SceneBuilder, SceneContext: builder-права без доступа к миру

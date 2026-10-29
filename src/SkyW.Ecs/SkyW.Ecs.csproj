@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SkyW.Ecs</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Friflo.Engine.ECS" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkyW.Abstractions/SkyW.Abstractions.csproj" />
+  </ItemGroup>
+
+  <!--
+    Типизированный шов ECS.
+
+    Friflo требует, чтобы тип компонента реализовал Friflo.Engine.ECS.IComponent,
+    а его generic-методы накладывают это ограничение на T. Реализация интерфейса
+    не может усилить ограничение, поэтому контракт с типизированными операциями
+    живёт здесь, а не в SkyW.Abstractions (docs/answers.md, решение владельца).
+
+    Friflo разрешён только этому проекту и SkyW.Backends.Friflo. Прикладные
+    компоненты реализуют SkyW.Ecs.IComponent и не импортируют Friflo напрямую:
+    пакет приходит транзитивно.
+
+    Каталоги внутри:
+      Components/  IComponent, ITag: маркеры, наследующие Friflo
+      World/       IEntityStore, IWorld, IQuery, ICommandQueue
+      Values/      EntityRef, ComponentId
+  -->
+
+</Project>

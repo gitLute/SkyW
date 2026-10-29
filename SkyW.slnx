@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/SkyW.Abstractions/SkyW.Abstractions.csproj" />
+    <Project Path="src/SkyW.Ecs/SkyW.Ecs.csproj" />
     <Project Path="src/SkyW.Mathematics/SkyW.Mathematics.csproj" />
     <Project Path="src/SkyW.Diagnostics/SkyW.Diagnostics.csproj" />
     <Project Path="src/SkyW.Content/SkyW.Content.csproj" />
@@ -11,6 +12,7 @@
     <Project Path="src/SkyW.Backends.Silk/SkyW.Backends.Silk.csproj" />
     <Project Path="src/SkyW.Backends.Jolt/SkyW.Backends.Jolt.csproj" />
     <Project Path="src/SkyW.Backends.Friflo/SkyW.Backends.Friflo.csproj" />
+    <Project Path="src/SkyW.Engine/SkyW.Engine.csproj" />
     <Project Path="src/SkyW.Host/SkyW.Host.csproj" />
     <Project Path="src/SkyW.Sandbox/SkyW.Sandbox.csproj" />
   </Folder>

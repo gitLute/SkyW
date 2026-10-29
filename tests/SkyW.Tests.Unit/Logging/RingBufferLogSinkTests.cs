@@ -11,7 +11,6 @@ public sealed class RingBufferLogSinkTests
     private static string MessageOf(string line)
     {
         int index = line.LastIndexOf("]: ", StringComparison.Ordinal);
-
         return line[(index + 3)..];
     }
 
@@ -19,7 +18,6 @@ public sealed class RingBufferLogSinkTests
     public void EmptyBuffer_SnapshotIsEmpty()
     {
         RingBufferLogSink sink = new(capacity: 4);
-
         Assert.Equal(4, sink.Capacity);
         Assert.Equal(0, sink.Count);
         Assert.Equal(0, sink.AcceptedCount);
@@ -31,10 +29,8 @@ public sealed class RingBufferLogSinkTests
     public void Write_StoresMessagesOldestFirst()
     {
         RingBufferLogSink sink = new(capacity: 4);
-
         sink.Write(LogLevel.Information, "первая");
         sink.Write(LogLevel.Warning, "вторая");
-
         Assert.Equal(["первая", "вторая"], sink.Snapshot().Select(MessageOf));
         Assert.Equal(2, sink.Count);
     }
@@ -43,12 +39,8 @@ public sealed class RingBufferLogSinkTests
     public void Overwrite_KeepsTheNewestLines()
     {
         RingBufferLogSink sink = new(capacity: 3);
-
         for (int index = 0; index < 6; index++)
-        {
             sink.Write(LogLevel.Information, $"строка {index}");
-        }
-
         Assert.Equal(["строка 3", "строка 4", "строка 5"], sink.Snapshot().Select(MessageOf));
         Assert.Equal(3, sink.Count);
         Assert.Equal(6, sink.AcceptedCount);
@@ -58,14 +50,9 @@ public sealed class RingBufferLogSinkTests
     public void AcceptedCount_SurvivesOverwriteAndClear()
     {
         RingBufferLogSink sink = new(capacity: 2);
-
         for (int index = 0; index < 5; index++)
-        {
             sink.Write(LogLevel.Information, $"строка {index}");
-        }
-
         sink.Clear();
-
         // Счётчик принадлежит приёмнику, а не содержимому.
         Assert.Equal(5, sink.AcceptedCount);
         Assert.Equal(0, sink.Count);
@@ -76,12 +63,9 @@ public sealed class RingBufferLogSinkTests
     public void SnapshotText_JoinsWithPlatformNewLine()
     {
         RingBufferLogSink sink = new(capacity: 4);
-
         sink.Write(LogLevel.Information, "первая");
         sink.Write(LogLevel.Error, "вторая");
-
         string[] parts = sink.SnapshotText().Split(Environment.NewLine);
-
         Assert.Equal(2, parts.Length);
         Assert.Equal(["первая", "вторая"], parts.Select(MessageOf));
     }
@@ -90,7 +74,6 @@ public sealed class RingBufferLogSinkTests
     public void IsEnabled_FiltersBySinkThreshold()
     {
         RingBufferLogSink sink = new(capacity: 4, minimumLevel: LogLevel.Warning);
-
         Assert.False(sink.IsEnabled(LogLevel.Debug));
         Assert.False(sink.IsEnabled(LogLevel.Information));
         Assert.True(sink.IsEnabled(LogLevel.Warning));
@@ -101,10 +84,8 @@ public sealed class RingBufferLogSinkTests
     public void Write_BelowThreshold_IsNotCounted()
     {
         RingBufferLogSink sink = new(capacity: 4, minimumLevel: LogLevel.Warning);
-
         sink.Write(LogLevel.Information, "не должно попасть");
         sink.Write(LogLevel.Error, "должно попасть");
-
         Assert.Equal(1, sink.Count);
         Assert.Equal(1, sink.AcceptedCount);
         Assert.Contains("должно попасть", Assert.Single(sink.Snapshot()), StringComparison.Ordinal);
@@ -121,7 +102,6 @@ public sealed class RingBufferLogSinkTests
     public void Write_RejectsNullMessage()
     {
         RingBufferLogSink sink = new(capacity: 4);
-
         Assert.Throws<ArgumentNullException>(() => sink.Write(LogLevel.Error, null!));
     }
 
@@ -131,22 +111,16 @@ public sealed class RingBufferLogSinkTests
         // docs/answers.md: максимум два потока, симуляция и рендер.
         const int ThreadCount = 2;
         const int MessagesPerThread = 400;
-
         RingBufferLogSink sink = new(capacity: 64);
-
         Task[] writers =
         [
             .. Enumerable.Range(0, ThreadCount).Select(worker => Task.Run(() =>
             {
                 for (int index = 0; index < MessagesPerThread; index++)
-                {
                     sink.Write(LogLevel.Information, $"поток {worker}, сообщение {index}");
-                }
             })),
         ];
-
         await Task.WhenAll(writers);
-
         Assert.Equal(64, sink.Count);
         Assert.Equal(ThreadCount * MessagesPerThread, sink.AcceptedCount);
         Assert.Equal(64, sink.Snapshot().Count);

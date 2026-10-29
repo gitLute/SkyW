@@ -16,6 +16,8 @@
     <ProjectReference Include="../../src/SkyW.Abstractions/SkyW.Abstractions.csproj" />
     <ProjectReference Include="../../src/SkyW.Content/SkyW.Content.csproj" />
     <ProjectReference Include="../../src/SkyW.Diagnostics/SkyW.Diagnostics.csproj" />
+    <ProjectReference Include="../../src/SkyW.Ecs/SkyW.Ecs.csproj" />
+    <ProjectReference Include="../../src/SkyW.Engine/SkyW.Engine.csproj" />
     <ProjectReference Include="../../src/SkyW.Input/SkyW.Input.csproj" />
     <ProjectReference Include="../../src/SkyW.Mathematics/SkyW.Mathematics.csproj" />
     <ProjectReference Include="../../src/SkyW.Rendering/SkyW.Rendering.csproj" />
@@ -24,9 +26,10 @@
   </ItemGroup>
 
   <!--
-    Юнит-тесты подсистем. Ссылаются только на слои 1-3 и не тянут ни рендер-бэкенд,
-    ни нативную физику: подмена времени, ввода и хранилища является требованием
-    архитектуры, а не удобством (docs/engine-architecture.md раздел 9).
+    Юнит-тесты подсистем. Не тянут ни рендер-бэкенд, ни нативную физику:
+    подмена времени, ввода и хранилища является требованием архитектуры,
+    а не удобством (docs/engine-architecture.md раздел 9). Композиция
+    SkyW.Engine подключается ради настроек и не приносит нативных зависимостей.
 
     Однопоточный режим с управляемым временем — способ гонять игровую логику
     детерминированно и быстро (раздел 2.4).
